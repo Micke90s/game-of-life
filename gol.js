@@ -37,6 +37,7 @@ window.onload = function() {
         this.deletePetritable = deletePetritable;
         this.syncDrawingStatusToLife = syncDrawingStatusToLife;
         this.syncLifeStatusToDrawing = syncLifeStatusToDrawing;
+        this.initRandom = initRandom;
 
         function getWidth() {
             return this.width;
@@ -115,6 +116,18 @@ window.onload = function() {
                     }
                 }
             } 
+        }
+
+        function initRandom() {
+            for (var i = 0; i < this.width ; i++) {
+                for (var j = 0; j < this.height ; j++) {
+                    var currentCell = this.getCell(i, j);
+                    if (Math.round(Math.random()) === 1) {
+                        currentCell.setAlive(true);
+                    }
+                }
+            }
+            this.syncDrawingStatusToLife();
         }
 
         this.buildPetriTable();
@@ -254,16 +267,24 @@ window.onload = function() {
         generator.theTable.syncLifeStatusToDrawing();
         intervalId = setInterval(function() { generator.lifeAndDeath(); }, 50);
         this.setAttribute("disabled", true);
+        document.getElementById("randomBtn").setAttribute("disabled", true);
     }
 
     var resetBtnListener = function() {
         generator.theTable.deletePetritable();
         clearInterval(intervalId);
         document.getElementById("startBtn").removeAttribute("disabled");
+        document.getElementById("randomBtn").removeAttribute("disabled");
         generator = new LifeGen(petritableWidth,petritableHeight);
+    }
+
+    var randomBtnListener = function() {
+        resetBtnListener();
+        generator.theTable.initRandom();
     }
 
     document.getElementById("startBtn").addEventListener("click", startBtnListener, false);
     document.getElementById("resetBtn").addEventListener("click", resetBtnListener, false);
+    document.getElementById("randomBtn").addEventListener("click", randomBtnListener, false);
 }
  
